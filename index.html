@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Let's Paint!</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+    integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+    crossorigin="anonymous">
+
+  <style>
+    #pink {
+      background-color: #F50057;
+      border-color: #F50057;
+    }
+
+    #blue {
+      background-color: #2979FF;
+      border-color: #2979FF;
+    }
+
+    #yellow {
+      background-color: #FFD600;
+      border-color: #FFD600;
+    }
+
+    #black {
+      background-color: #000000;
+      border-color: #000000;
+    }
+
+    i.white {
+      color: white;
+    }
+
+    div#controls {
+      width: 960px;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    div#drawingArea {
+      width: 960px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 34px;
+      text-align: center;
+      margin-top: 60px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Let's Paint!</h1>
+
+  <div id="drawingArea">
+    <canvas id="main" width="960" height="500" style="border:1px solid #ccc;">
+      Here is my canvas.
+    </canvas>
+  </div>
+
+  <div id="controls">
+    <button id="new" class="btn btn-action">
+      <i class="far fa-file"></i>
+    </button>
+
+    <button id="erase" class="btn btn-action">
+      <i class="fas fa-eraser"></i>
+    </button>
+
+    <button id="black" class="btn btn-action">
+      <i class="fas fa-paint-brush white"></i>
+    </button>
+    <button id="pink" class="btn btn-action">
+      <i class="fas fa-paint-brush white"></i>
+    </button>
+    <button id="blue" class="btn btn-action">
+      <i class="fas fa-paint-brush white"></i>
+    </button>
+    <button id="yellow" class="btn btn-action">
+      <i class="fas fa-paint-brush white"></i>
+    </button>
+
+    <br>
+
+    Brush size:
+    <input id="slider" type="range" min="2" max="15" step="1" />
+    <span id="brushSize"></span>
+  </div>
+
+  <div id="log"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const canvas = document.getElementById('main');
+      const context = canvas.getContext('2d');
+      let isDrawing = false;
+      let lastX = 0;
+      let lastY = 0;
+      let hue = 0;
+      let brushSize = 5;
+      let currentColor = '#000000'; // Default color is black
+
+      function draw(e) {
+        if (!isDrawing) return;
+
+        context.strokeStyle = currentColor;
+        context.lineWidth = brushSize;
+        context.lineCap = 'round';
+
+        context.beginPath();
+        context.moveTo(lastX, lastY);
+        context.lineTo(e.offsetX, e.offsetY);
+        context.stroke();
+
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+
+        hue++;
+        if (hue >= 360) {
+          hue = 0;
+        }
+      }
+
+      canvas.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+      });
+
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', () => isDrawing = false);
+      canvas.addEventListener('mouseout', () => isDrawing = false);
+
+      document.getElementById('erase').addEventListener('click', () => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      });
+
+      document.getElementById('new').addEventListener('click', () => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      });
+
+      document.getElementById('slider').addEventListener('input', () => {
+        brushSize = document.getElementById('slider').value;
+        document.getElementById('brushSize').textContent = brushSize;
+      });
+
+      document.getElementById('pink').addEventListener('click', () => {
+        currentColor = '#F50057'; // Set color to pink
+      });
+
+      document.getElementById('blue').addEventListener('click', () => {
+        currentColor = '#2979FF'; // Set color to blue
+      });
+
+      document.getElementById('yellow').addEventListener('click', () => {
+        currentColor = '#FFD600'; // Set color to yellow
+      });
+
+      document.getElementById('black').addEventListener('click', () => {
+        currentColor = '#000000'; // Set color to black
+      });
+    });
+  </script>
+</body>
+
+</html>
